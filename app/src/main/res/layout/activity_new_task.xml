@@ -20,7 +20,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="16dp"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="16dp">
+            android:layout_marginStart="16dp" android:id="@+id/textInputLayout4">
 
         <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
@@ -42,6 +42,15 @@
             android:id="@+id/newTaskButton"
             android:text="@string/newTaskButton"
             android:textAlignment="center"/>
+    <CheckBox
+            android:text="@string/is_high_priority"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/highPriorityCheckBox"
+            android:layout_marginStart="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/textInputLayout4"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

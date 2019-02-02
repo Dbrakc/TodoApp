@@ -44,8 +44,8 @@ class TaskViewModel (val taskRepository: TaskRepository) : BaseViewModel() {
             ).addTo(compositeDisposable)
     }
 
-    fun addNewTask (taskContent: String){
-        val newTask = Task (0,taskContent, Date(),false)
+    fun addNewTask (taskContent: String, isHighPriority: Boolean){
+        val newTask = Task (0,taskContent, Date(),false, isHighPriority)
         Completable.fromCallable {
             taskRepository.insert(newTask)
         }
@@ -53,7 +53,6 @@ class TaskViewModel (val taskRepository: TaskRepository) : BaseViewModel() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
                 onComplete={
-                    loadTasks()
                     newTaskAddedEvent.call()
                 },
                 onError={
@@ -82,11 +81,6 @@ class TaskViewModel (val taskRepository: TaskRepository) : BaseViewModel() {
 
         val newTask = task.copy(isDone = false)
 
-        updateTask(newTask)
-    }
-
-    fun updateTaskContent(task:Task, newContent: String){
-        val newTask = task.copy(content = newContent)
         updateTask(newTask)
     }
 
@@ -126,8 +120,10 @@ class TaskViewModel (val taskRepository: TaskRepository) : BaseViewModel() {
 
     }
 
-
-
+    fun markAsHighPriority(task: Task, highPriority: Boolean) {
+        val newTask = task.copy(isHighPriority = highPriority)
+        updateTask(newTask)
+    }
 
 
 }

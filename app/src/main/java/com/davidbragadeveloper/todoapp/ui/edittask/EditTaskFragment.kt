@@ -81,12 +81,17 @@ class EditTaskFragment : BottomSheetDialog() {
     }
 
     fun bindActions() {
-        requireNotNull(task) {
-            "Task is null dailog should be closed"
-        }
-
-        inputTaskContent.setText(task!!.content)
-
+        editTaskButton
+            .clicks()
+            .throttleFirst(300, TimeUnit.MILLISECONDS)
+            .subscribe() {
+                val newTask = task!!.copy(
+                    content = inputTaskContent.text.toString(),
+                    isHighPriority = highPriorityCheckBox.isChecked
+                )
+                taskViewModel.updateTask(newTask)
+            }
+            .addTo(compositeDisposable)
     }
 
     fun bindEvents() {
@@ -100,13 +105,14 @@ class EditTaskFragment : BottomSheetDialog() {
 
 
     fun fillData() {
-        editTaskButton
-            .clicks()
-            .throttleFirst(300, TimeUnit.MILLISECONDS)
-            .subscribe() {
-                taskViewModel.updateTaskContent(task!!, inputTaskContent.text.toString())
-            }
-            .addTo(compositeDisposable)
+        requireNotNull(task) {
+            "Task is null dailog should be closed"
+        }
+
+        task?.let {
+            inputTaskContent.setText(it.content)
+            highPriorityCheckBox.isChecked = it.isHighPriority
+        }
     }
 
 }

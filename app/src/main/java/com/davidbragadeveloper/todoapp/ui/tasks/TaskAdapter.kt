@@ -1,14 +1,13 @@
 package com.davidbragadeveloper.todoapp.ui.tasks
 
 import android.animation.ValueAnimator
-import android.text.Layout
+import android.graphics.Color
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.StrikethroughSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.OvershootInterpolator
 import android.widget.TextView
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.recyclerview.widget.ListAdapter
@@ -16,9 +15,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.davidbragadeveloper.todoapp.R
 import com.davidbragadeveloper.todoapp.data.model.Task
 import com.davidbragadeveloper.todoapp.util.DateHelper
+import com.davidbragadeveloper.todoapp.util.IconButton
 import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.view.longClicks
-import com.jakewharton.rxbinding3.widget.checkedChanges
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.item_task.view.*
@@ -27,7 +26,8 @@ import java.util.concurrent.TimeUnit
 class TaskAdapter(
     val onTaskClicked: (Task) -> Unit,
     val onTaskMarked: (Task, Boolean) -> Unit,
-    val onTaskLongClicked: (Task) -> Unit
+    val onTaskLongClicked: (Task) -> Unit,
+    val onTaskHighPriorityMarked: (Task, Boolean) -> Unit
 ):ListAdapter<Task,TaskAdapter.TaskViewHolder>(TaskDiffUtil.getInstance()){
 
     private val componentDisposable = CompositeDisposable()
@@ -51,8 +51,6 @@ class TaskAdapter(
     inner class TaskViewHolder(view: View): RecyclerView.ViewHolder(view){
 
 
-
-
         fun bind(task: Task){
 
             with(itemView){
@@ -62,6 +60,10 @@ class TaskAdapter(
                 }else {
                     removeStrikethrough(contentTextView, task.content)
                 }
+
+
+                applyColorToHighPriority(buttonHighPriority, task.isHighPriority)
+
                 dateTextView.text = DateHelper.calculateTimaAgo(task.createdAt)
                 isDoneCheckBox.isChecked = task.isDone
 
@@ -97,6 +99,25 @@ class TaskAdapter(
                         onTaskLongClicked(task)
                     }
                     .addTo(componentDisposable)
+
+                buttonHighPriority
+                    .clicks()
+                    .throttleFirst(600,TimeUnit.MILLISECONDS)
+                    .subscribe{
+                        val isHighPriority = !task.isHighPriority
+                        onTaskHighPriorityMarked(task, isHighPriority)
+                        applyColorToHighPriority(buttonHighPriority, isHighPriority)
+                    }
+                    .addTo(componentDisposable)
+            }
+
+        }
+
+        private fun applyColorToHighPriority(buttonHighPriority: IconButton, highPriority: Boolean) {
+            if (highPriority){
+                buttonHighPriority.setColorDrawable(Color.RED)
+            }else{
+                buttonHighPriority.setColorDrawable(Color.WHITE)
             }
 
         }

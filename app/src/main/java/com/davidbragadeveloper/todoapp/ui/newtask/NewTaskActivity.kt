@@ -3,6 +3,7 @@ package com.davidbragadeveloper.todoapp.ui.newtask
 import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.lifecycle.Observer
 import com.davidbragadeveloper.todoapp.R
 import com.davidbragadeveloper.todoapp.ui.base.BaseActivity
@@ -47,7 +48,7 @@ class NewTaskActivity : BaseActivity() {
             .clicks()
             .throttleFirst(600, TimeUnit.MILLISECONDS)
             .subscribe {
-                taskViewModel.addNewTask(inputTaskContent.text.toString())
+                taskViewModel.addNewTask(inputTaskContent.text.toString(), highPriorityCheckBox.isChecked)
             }
             .addTo(compositeDisposable)
     }

@@ -31,11 +31,11 @@ class TasksFragment : Fragment() {
             },
             onTaskLongClicked = {
                 val items = arrayListOf(
-                    BottomMenuItem(R.drawable.ic_delete_black_24dp, getString(R.string.delete)){
-                        showConfirmDeleteTaskDialog(it)
-                    },
                     BottomMenuItem(R.drawable.ic_edit,getString(R.string.edit)){
                         Navigation.navigateToEditFragment(it, childFragmentManager)
+                    },
+                    BottomMenuItem(R.drawable.ic_delete_black_24dp, getString(R.string.delete)){
+                        showConfirmDeleteTaskDialog(it)
                     }
                 )
                 BottomSheetMenu(context!! ,items).show()
@@ -46,6 +46,10 @@ class TasksFragment : Fragment() {
                 }else{
                     taskViewModel.markAsNotDone(task)
                 }
+            },
+            onTaskHighPriorityMarked = { task, isHighPriority ->
+                taskViewModel.markAsHighPriority(task, isHighPriority)
+
             }
         )
     }
