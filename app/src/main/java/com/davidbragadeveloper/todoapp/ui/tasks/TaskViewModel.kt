@@ -23,6 +23,7 @@ class TaskViewModel (val taskRepository: TaskRepository) : BaseViewModel() {
     val tasksEvent = MutableLiveData<List<Task>>()
     val newTaskAddedEvent = MutableLiveData<Event<Unit>>()
     val updateTaskEvent = MutableLiveData<Event<Task>>()
+    val taskByIdEvent = MutableLiveData<Task>()
 
     init {
         loadTasks()
@@ -61,27 +62,19 @@ class TaskViewModel (val taskRepository: TaskRepository) : BaseViewModel() {
             ).addTo(compositeDisposable)
     }
 
-    fun markAsDone (task: Task) {
-        if(task.isDone){
-            return
-        }
-
-        val newTask = task.copy(isDone = true)
-
-        updateTask(newTask)
-    }
-
-
-
-    fun markAsNotDone (task: Task){
-
-        if(!task.isDone){
-            return
-        }
-
-        val newTask = task.copy(isDone = false)
-
-        updateTask(newTask)
+    fun getTaskById (id: Long){
+        taskRepository
+            .getTaskById(id)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onNext= {
+                    taskByIdEvent.value = it
+                },
+                onError = {
+                    Log.e(TaskViewModel::class.java.simpleName, "Error: $it")
+                }
+            ).addTo(compositeDisposable)
     }
 
 
@@ -119,6 +112,30 @@ class TaskViewModel (val taskRepository: TaskRepository) : BaseViewModel() {
             ).addTo(compositeDisposable)
 
     }
+
+    fun markAsDone (task: Task) {
+        if(task.isDone){
+            return
+        }
+
+        val newTask = task.copy(isDone = true)
+
+        updateTask(newTask)
+    }
+
+
+
+    fun markAsNotDone (task: Task){
+
+        if(!task.isDone){
+            return
+        }
+
+        val newTask = task.copy(isDone = false)
+
+        updateTask(newTask)
+    }
+
 
     fun markAsHighPriority(task: Task, highPriority: Boolean) {
         val newTask = task.copy(isHighPriority = highPriority)

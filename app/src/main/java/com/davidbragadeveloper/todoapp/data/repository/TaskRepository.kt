@@ -4,13 +4,14 @@ import com.davidbragadeveloper.todoapp.data.model.Task
 import io.reactivex.Flowable
 import io.reactivex.Single
 
+
 interface TaskRepository {
 
     fun getAllTasks():Single<List<Task>>
 
     fun observerAll(): Flowable<List<Task>>
 
-    fun getTaskById(id: Long):Single<Task>
+    fun getTaskById(id: Long):Flowable<Task>
 
     fun insert(task: Task)
 

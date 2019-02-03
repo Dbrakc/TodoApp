@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.davidbragadeveloper.todoapp.R
 import com.davidbragadeveloper.todoapp.data.model.Task
+import com.davidbragadeveloper.todoapp.ui.base.BaseFragment
 import com.davidbragadeveloper.todoapp.util.Navigation
 import com.davidbragadeveloper.todoapp.util.botomsheet.BottomMenuItem
 import com.davidbragadeveloper.todoapp.util.botomsheet.BottomSheetMenu
@@ -21,24 +22,15 @@ import kotlinx.android.synthetic.main.fragment_tasks.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class TasksFragment : Fragment() {
+class TasksFragment : BaseFragment() {
 
-    val taskViewModel: TaskViewModel by viewModel()
     val adapter: TaskAdapter by lazy {
         TaskAdapter(
             onTaskClicked = {
-                //TODO navigate to detail
+                Navigation.navigateToDetail(it, fragmentManager!!)
             },
             onTaskLongClicked = {
-                val items = arrayListOf(
-                    BottomMenuItem(R.drawable.ic_edit,getString(R.string.edit)){
-                        Navigation.navigateToEditFragment(it, childFragmentManager)
-                    },
-                    BottomMenuItem(R.drawable.ic_delete_black_24dp, getString(R.string.delete)){
-                        showConfirmDeleteTaskDialog(it)
-                    }
-                )
-                BottomSheetMenu(context!! ,items).show()
+                showBottomSheetMenu(it)
             },
             onTaskMarked = { task, isDone ->
                 if(isDone){
@@ -54,11 +46,10 @@ class TasksFragment : Fragment() {
         )
     }
 
-
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_tasks,container,false)
     }
+
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -73,10 +64,10 @@ class TasksFragment : Fragment() {
         }
     }
 
-
     private fun setUp() {
         setUpRecyclerView()
     }
+
 
     private fun setUpRecyclerView() {
         taskRecycler.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
@@ -84,15 +75,5 @@ class TasksFragment : Fragment() {
         taskRecycler.adapter = adapter
     }
 
-    private fun showConfirmDeleteTaskDialog(task: Task) {
-        AlertDialog.Builder(context!!)
-            .setTitle(R.string.task_delete_title)
-            .setMessage(R.string.delete_task_message)
-            .setPositiveButton(R.string.yes) { _: DialogInterface, i: Int ->
-                taskViewModel.deleteTask(task)
-            }
-            .setNegativeButton(R.string.no,null)
-            .create()
-            .show()
-    }
+
 }

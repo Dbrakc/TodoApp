@@ -1,6 +1,7 @@
 package com.davidbragadeveloper.todoapp.ui.tasks
 
 import android.animation.ValueAnimator
+import android.content.Context
 import android.graphics.Color
 import android.text.SpannableString
 import android.text.Spanned
@@ -24,7 +25,7 @@ import kotlinx.android.synthetic.main.item_task.view.*
 import java.util.concurrent.TimeUnit
 
 class TaskAdapter(
-    val onTaskClicked: (Task) -> Unit,
+    val onTaskClicked: (Long) -> Unit,
     val onTaskMarked: (Task, Boolean) -> Unit,
     val onTaskLongClicked: (Task) -> Unit,
     val onTaskHighPriorityMarked: (Task, Boolean) -> Unit
@@ -71,7 +72,7 @@ class TaskAdapter(
                     .clicks()
                     .throttleFirst(600,TimeUnit.MILLISECONDS)
                     .subscribe{
-                        onTaskClicked(task)
+                        onTaskClicked(task.id)
                     }
                     .addTo(componentDisposable)
 

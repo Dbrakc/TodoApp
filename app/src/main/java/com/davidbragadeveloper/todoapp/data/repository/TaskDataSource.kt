@@ -10,7 +10,7 @@ interface TaskDataSource {
 
     fun observerAll(): Flowable<List<Task>>
 
-    fun getTaskById(id: Long): Single<Task>
+    fun getTaskById(id: Long): Flowable<Task>
 
     fun insert(task: Task)
 

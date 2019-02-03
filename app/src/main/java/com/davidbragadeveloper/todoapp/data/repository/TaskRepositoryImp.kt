@@ -12,7 +12,7 @@ class TaskRepositoryImp (val localDataSource: LocalDataSource) : TaskRepository 
 
     override fun observerAll(): Flowable<List<Task>> = localDataSource.observerAll()
 
-    override fun getTaskById(id: Long): Single<Task> = localDataSource.getTaskById(id)
+    override fun getTaskById(id: Long): Flowable<Task> = localDataSource.getTaskById(id)
 
 
     override fun insert(task: Task) {

@@ -8,6 +8,7 @@ import androidx.lifecycle.Observer
 import com.davidbragadeveloper.todoapp.R
 import com.davidbragadeveloper.todoapp.ui.base.BaseActivity
 import com.davidbragadeveloper.todoapp.ui.tasks.TaskViewModel
+import com.davidbragadeveloper.todoapp.util.Navigation
 import com.jakewharton.rxbinding3.view.clicks
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
@@ -36,7 +37,7 @@ class NewTaskActivity : BaseActivity() {
                 if(!it.hasBeenHandled) {
                     it.getContentIfNotHandled()
                     setResult(Activity.RESULT_OK)
-                    finish()
+                    Navigation.navigateToTasksFragment(context = applicationContext)
                 }
 
             })

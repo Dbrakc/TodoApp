@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.davidbragadeveloper.todoapp.R
+import com.davidbragadeveloper.todoapp.util.Navigation
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.android.synthetic.main.bottom_sheet_menu.view.*
 
@@ -21,7 +22,9 @@ class BottomSheetMenu(private val context: Context,
             document_sign_type_recycler.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
             document_sign_type_recycler.adapter = BottomSheetMenuAdapter(
                 items = items,
-                onClick = {bottomSheetDialog.dismiss()}
+                onClick = {
+                    bottomSheetDialog.dismiss()
+                }
             )
         }
     }
