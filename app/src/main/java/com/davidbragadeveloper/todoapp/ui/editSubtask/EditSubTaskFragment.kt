@@ -22,10 +22,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.concurrent.TimeUnit
 
 
-/**
- * A simple [Fragment] subclass.
- *
- */
+
 class EditSubTaskFragment : BottomSheetDialog() {
 
     companion object {
@@ -75,9 +72,14 @@ class EditSubTaskFragment : BottomSheetDialog() {
     }
 
     private fun setUp() {
+        setHint()
         fillData()
         bindEvents()
         bindActions()
+    }
+
+    private fun setHint() {
+        textInputLayout.hint = getString(R.string.edit_subtask_input_hint)
     }
 
     fun bindActions() {
@@ -87,7 +89,7 @@ class EditSubTaskFragment : BottomSheetDialog() {
             .subscribe() {
                 val newSubtask = subtask!!.copy(
                     content = inputTaskContent.text.toString(),
-                    isHighPriority = highPriorityCheckBox.isChecked
+                    highPriority = priorityChip.getHighPriority()
                 )
                 subTaskViewModel.update(newSubtask)
             }
@@ -111,7 +113,7 @@ class EditSubTaskFragment : BottomSheetDialog() {
 
         subtask?.let {
             inputTaskContent.setText(it.content)
-            highPriorityCheckBox.isChecked = it.isHighPriority
+            priorityChip.setColorForHighPriority(it.highPriority)
         }
     }
 

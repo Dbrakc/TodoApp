@@ -2,6 +2,7 @@ package com.davidbragadeveloper.todoapp.ui
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.davidbragadeveloper.todoapp.data.model.HighPriority
 import com.davidbragadeveloper.todoapp.data.model.Subtask
 import com.davidbragadeveloper.todoapp.data.model.Task
 import com.davidbragadeveloper.todoapp.data.model.Taskeable
@@ -43,8 +44,8 @@ class SubtaskViewModel (val subtaskRepository: SubtaskRepository): BaseViewModel
         }
     }
 
-    fun addNew(content: String, isHighPriority: Boolean, task: Task) {
-        val newSubtask = Subtask(0, content, Date(), false, isHighPriority, task.id)
+    fun addNew(content: String, highPriority: HighPriority, task: Task) {
+        val newSubtask = Subtask(0, content, Date(), false, highPriority, task.id)
         Completable.fromCallable {
             subtaskRepository.insertSubtask(newSubtask)
         }
@@ -119,8 +120,8 @@ class SubtaskViewModel (val subtaskRepository: SubtaskRepository): BaseViewModel
 
     }
 
-    fun markAsHighPriority(subtask: Subtask, highPriority: Boolean) {
-        val newTask = subtask.copy(isHighPriority = highPriority)
+    fun markAsHighPriority(subtask: Subtask, highPriority: HighPriority) {
+        val newTask = subtask.copy(highPriority = highPriority)
         update(newTask)
     }
 

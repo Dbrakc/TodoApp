@@ -1,5 +1,6 @@
 package com.davidbragadeveloper.todoapp.ui.subtask
 
+import android.app.Activity
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.davidbragadeveloper.todoapp.R
 import com.davidbragadeveloper.todoapp.data.model.Subtask
 import com.davidbragadeveloper.todoapp.ui.base.BaseSubtasksFragment
+import com.davidbragadeveloper.todoapp.util.ListPaddingDecoration
 import com.davidbragadeveloper.todoapp.util.Navigation
 import kotlinx.android.synthetic.main.fragment_tasks.*
 
@@ -93,6 +95,13 @@ class SubTaskFragment  : BaseSubtasksFragment() {
     private fun setUpRecyclerView() {
         taskRecycler.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
         taskRecycler.itemAnimator = DefaultItemAnimator()
+        taskRecycler.addItemDecoration(
+            ListPaddingDecoration(
+                activity as Activity,
+                0,
+                0
+            )
+        )
         taskRecycler.adapter = adapter
     }
 

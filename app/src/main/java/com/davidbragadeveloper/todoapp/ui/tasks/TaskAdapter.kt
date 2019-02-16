@@ -5,16 +5,19 @@ import android.graphics.Color
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.StrikethroughSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.davidbragadeveloper.todoapp.R
+import com.davidbragadeveloper.todoapp.data.model.HighPriority
 import com.davidbragadeveloper.todoapp.data.model.Subtask
 import com.davidbragadeveloper.todoapp.data.model.Task
 import com.davidbragadeveloper.todoapp.ui.base.BaseAdapter
@@ -31,7 +34,7 @@ class TaskAdapter(
     val onTaskClicked: (Long) -> Unit,
     val onTaskMarked: (Task, Boolean) -> Unit,
     val onTaskLongClicked: (Task) -> Unit,
-    val onTaskHighPriorityMarked: (Task, Boolean) -> Unit
+    val onTaskHighPriorityMarked: (Task, HighPriority) -> Unit
 ) : BaseAdapter<Task>(
     object : DiffUtil.ItemCallback<Task>() {
         override fun areItemsTheSame(oldItem: Task, newItem: Task): Boolean = oldItem.id == newItem.id
@@ -39,7 +42,11 @@ class TaskAdapter(
         override fun areContentsTheSame(oldItem: Task, newItem: Task): Boolean = oldItem == newItem
 
     }) {
+
+    var primaryColor: Int = 0
+
     override fun bindInViewHolder(task: Task, view: View) {
+        primaryColor = ContextCompat.getColor(view.context, R.color.colorPrimary)
         with(view) {
             if (task.isDone) {
                 applyStrikethrough(contentTextView, task.content)
@@ -49,7 +56,7 @@ class TaskAdapter(
             }
 
 
-            applyColorToHighPriority(buttonHighPriority, task.isHighPriority)
+            applyColorToHighPriority(buttonHighPriority, task.highPriority)
 
             dateTextView.text = DateHelper.calculateTimaAgo(task.createdAt)
             isDoneCheckBox.isChecked = task.isDone
@@ -91,23 +98,33 @@ class TaskAdapter(
                 .clicks()
                 .throttleFirst(600, TimeUnit.MILLISECONDS)
                 .subscribe {
-                    val isHighPriority = !task.isHighPriority
-                    onTaskHighPriorityMarked(task, isHighPriority)
-                    applyColorToHighPriority(buttonHighPriority, isHighPriority)
+                    val highPriority = if ( task.highPriority == HighPriority.HIGH) {
+                        HighPriority.LOW
+                    }else if(task.highPriority == HighPriority.MEDIUM) {
+                        HighPriority.HIGH
+                    }else if(task.highPriority == HighPriority.LOW) {
+                        HighPriority.MEDIUM
+                    }else{
+                        HighPriority.LOW
+                    }
+                    onTaskHighPriorityMarked(task, highPriority)
+                    applyColorToHighPriority(buttonHighPriority, highPriority)
                 }
                 .addTo(componentDisposable)
         }
     }
 
 
-    private fun applyColorToHighPriority(buttonHighPriority: IconButton, highPriority: Boolean) {
-        if (highPriority) {
+    private fun applyColorToHighPriority(buttonHighPriority: IconButton, highPriority: HighPriority) {
+        if (highPriority == HighPriority.HIGH) {
             buttonHighPriority.setColorDrawable(Color.RED)
+        } else if (highPriority == HighPriority.MEDIUM) {
+            buttonHighPriority.setColorDrawable(primaryColor)
         } else {
             buttonHighPriority.setColorDrawable(Color.WHITE)
         }
-
     }
+
 
 
     private fun executeAnimation(view: View, isDone: Boolean) {

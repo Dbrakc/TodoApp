@@ -25,7 +25,11 @@ class LocalDataSource (
         todoDatabase
             .getTaskDao()
             .observeAll()
-            .map { TaskMapper.transformList(it) }
+            .map {
+                TaskMapper
+                    .transformList(it)
+                    .sortedByDescending {it.highPriority.priorityValue}
+            }
 
     override fun getTaskById(id: Long): Flowable<Task> =
         todoDatabase
@@ -51,8 +55,9 @@ class LocalDataSource (
             .getSubtaskDao()
             .observeAll(taskId)
             .map {
-                Log.d("Local data source response", it.size.toString())
-                SubtaskMapper.transformList(it) }
+                SubtaskMapper
+                    .transformList(it)
+                    .sortedByDescending {it.highPriority.priorityValue}}
 
 
     override fun insertSubtask(subtaskEntity: Subtask) {

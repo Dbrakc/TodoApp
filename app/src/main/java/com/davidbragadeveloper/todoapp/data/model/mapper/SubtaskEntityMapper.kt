@@ -9,7 +9,7 @@ object  SubtaskEntityMapper : Mapper<Subtask, SubtaskEntity> {
         input.content,
         input.createdAt,
         input.isDone,
-        input.isHighPriority,
+        input.highPriority.toString(),
         input.taskId
 
     )

@@ -9,7 +9,7 @@ object TaskEntityMapper: Mapper<Task, TaskEntity> {
         input.content,
         input.createdAt,
         input.isDone,
-        input.isHighPriority
+        input.highPriority.toString()
     )
 
     override fun transformList(input: List<Task>): List<TaskEntity> =

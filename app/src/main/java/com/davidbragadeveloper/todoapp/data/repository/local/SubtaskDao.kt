@@ -7,11 +7,8 @@ import io.reactivex.Single
 @Dao
 abstract class SubtaskDao {
 
-    @Query("SELECT * FROM subtasks WHERE task_id=:taskId ORDER BY is_high_priority AND created_at DESC")
+    @Query("SELECT * FROM subtasks WHERE task_id=:taskId ORDER BY created_at DESC")
     abstract fun observeAll(taskId: Long): Flowable<List<SubtaskEntity>>
-
-    /*@Query("SELECT * FROM tasks WHERE id = :id")
-    abstract fun getById(id: Long): Flowable<TaskEntity>*/
 
     @Insert
     abstract fun insert(subtaskEntity: SubtaskEntity)

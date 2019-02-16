@@ -2,14 +2,12 @@ package com.davidbragadeveloper.todoapp.ui.newsubtask
 
 import android.app.Activity
 import android.os.Bundle
-import android.util.Log
 import androidx.lifecycle.Observer
 import com.davidbragadeveloper.todoapp.R
 import com.davidbragadeveloper.todoapp.data.model.Task
 import com.davidbragadeveloper.todoapp.ui.SubtaskViewModel
 import com.davidbragadeveloper.todoapp.ui.base.BaseActivity
 import com.davidbragadeveloper.todoapp.ui.edittask.EditTaskFragment.Companion.PARAM_TASK
-import com.davidbragadeveloper.todoapp.util.Navigation
 import com.jakewharton.rxbinding3.view.clicks
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
@@ -26,13 +24,21 @@ class NewSubtaskActivity () : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_task)
+        setUpToolbar(true)
+        setTitle(R.string.new_subtask_title)
         val extras = intent.extras
         task = extras?.getParcelable(PARAM_TASK)!!
 
+        setHint()
         bindObserver()
         bindActions()
 
     }
+
+    private fun setHint() {
+        textInputLayout.hint = getString(R.string.new_subtask_input_hint)
+    }
+
 
     private fun bindObserver() {
         with(subtaskViewModel){
@@ -52,7 +58,7 @@ class NewSubtaskActivity () : BaseActivity() {
             .clicks()
             .throttleFirst(600, TimeUnit.MILLISECONDS)
             .subscribe {
-                subtaskViewModel.addNew(inputTaskContent.text.toString(), highPriorityCheckBox.isChecked,task)
+                subtaskViewModel.addNew(inputTaskContent.text.toString(), priorityChip.getHighPriority(),task)
             }
             .addTo(compositeDisposable)
     }

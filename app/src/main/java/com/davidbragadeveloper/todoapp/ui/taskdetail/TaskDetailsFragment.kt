@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 
 import com.davidbragadeveloper.todoapp.R
+import com.davidbragadeveloper.todoapp.data.model.HighPriority
 import com.davidbragadeveloper.todoapp.data.model.Task
 import com.davidbragadeveloper.todoapp.ui.base.BaseTasksFragment
 import com.davidbragadeveloper.todoapp.ui.subtask.SubTaskFragment
@@ -106,13 +107,7 @@ class TaskDetailsFragment : BaseTasksFragment() {
     private fun setUp(task: Task) {
         tituloTextView.text = task.content
         dateTextView.text = DateHelper.calculateTimaAgo(task.createdAt)
-        if (task.isHighPriority) {
-            priorityChip.chipBackgroundColor = ColorStateList.valueOf(Color.RED)
-            priorityChip.setText("High Priority")
-        } else {
-            priorityChip.chipBackgroundColor = ColorStateList.valueOf(Color.BLUE)
-            priorityChip.setText("Low Priority")
-        }
+        priorityChip.setColorForHighPriority(task.highPriority)
 
         if (task.isDone) {
             isDoneCheckBox.setTextColor(Color.RED)

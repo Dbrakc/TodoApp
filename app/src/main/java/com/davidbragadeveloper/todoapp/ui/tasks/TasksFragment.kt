@@ -1,5 +1,6 @@
 package com.davidbragadeveloper.todoapp.ui.tasks
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.davidbragadeveloper.todoapp.R
 import com.davidbragadeveloper.todoapp.data.model.Task
 import com.davidbragadeveloper.todoapp.ui.base.BaseTasksFragment
+import com.davidbragadeveloper.todoapp.util.ListPaddingDecoration
 import com.davidbragadeveloper.todoapp.util.Navigation
 import kotlinx.android.synthetic.main.fragment_tasks.*
 
@@ -46,8 +48,8 @@ class TasksFragment  : BaseTasksFragment() {
                     viewModel.markAsNotDone(task)
                 }
             },
-            onTaskHighPriorityMarked = { task, isHighPriority ->
-                viewModel.markAsHighPriority(task, isHighPriority)
+            onTaskHighPriorityMarked = { task, highPriority ->
+                viewModel.markAsHighPriority(task, highPriority)
 
             }
         )
@@ -81,8 +83,15 @@ class TasksFragment  : BaseTasksFragment() {
     private fun setUpRecyclerView() {
         taskRecycler.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
         taskRecycler.itemAnimator = DefaultItemAnimator()
+        taskRecycler.addItemDecoration(
+            ListPaddingDecoration(
+            activity as Activity,
+             0,
+            0
+        ))
         taskRecycler.adapter = adapter
     }
+
 
 
 }

@@ -2,6 +2,7 @@ package com.davidbragadeveloper.todoapp.ui
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.davidbragadeveloper.todoapp.data.model.HighPriority
 import com.davidbragadeveloper.todoapp.data.model.Task
 import com.davidbragadeveloper.todoapp.data.model.Taskeable
 import com.davidbragadeveloper.todoapp.data.repository.TaskRepository
@@ -44,8 +45,8 @@ class TaskViewModel(val taskRepository: TaskRepository) : BaseViewModel() {
             ).addTo(compositeDisposable)
     }
 
-    fun addNew(content: String, isHighPriority: Boolean) {
-        val newTask = Task(0, content, Date(), false, isHighPriority)
+    fun addNew(content: String, highPriority: HighPriority) {
+        val newTask = Task(0, content, Date(), false, highPriority = highPriority)
         Completable.fromCallable {
             taskRepository.insert(newTask)
         }
@@ -136,8 +137,8 @@ class TaskViewModel(val taskRepository: TaskRepository) : BaseViewModel() {
     }
 
 
-    fun markAsHighPriority(task: Task, highPriority: Boolean) {
-            val newTask = task.copy(isHighPriority = highPriority)
+    fun markAsHighPriority(task: Task, highPriority: HighPriority) {
+            val newTask = task.copy(highPriority = highPriority)
             update(newTask)
     }
 

@@ -1,5 +1,6 @@
 package com.davidbragadeveloper.todoapp.data.model.mapper
 
+import com.davidbragadeveloper.todoapp.data.model.HighPriority
 import com.davidbragadeveloper.todoapp.data.model.Subtask
 import com.davidbragadeveloper.todoapp.data.repository.local.SubtaskEntity
 
@@ -9,7 +10,7 @@ object SubtaskMapper : Mapper<SubtaskEntity, Subtask> {
         input.content,
         input.createdAt,
         input.isDone,
-        input.isHighPriority,
+        HighPriority.valueOf(input.highPriority),
         input.taskId
     )
 

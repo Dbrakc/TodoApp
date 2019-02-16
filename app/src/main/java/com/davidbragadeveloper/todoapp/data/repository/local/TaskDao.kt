@@ -7,10 +7,10 @@ import io.reactivex.Single
 @Dao
 abstract class TaskDao {
 
-    @Query("SELECT * FROM tasks ORDER BY is_high_priority AND created_at DESC")
+    @Query("SELECT * FROM tasks ORDER BY created_at DESC")
     abstract fun getAll():Single<List<TaskEntity>>
 
-    @Query("SELECT * FROM tasks ORDER BY is_high_priority AND created_at DESC")
+    @Query("SELECT * FROM tasks ORDER BY created_at DESC")
     abstract fun observeAll():Flowable<List<TaskEntity>>
 
     @Query("SELECT * FROM tasks WHERE id = :id")

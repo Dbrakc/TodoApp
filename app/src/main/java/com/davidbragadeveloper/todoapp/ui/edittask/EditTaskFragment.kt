@@ -73,6 +73,7 @@ class EditTaskFragment : BottomSheetDialog() {
     }
 
     private fun setUp() {
+        setHint()
         fillData()
         bindEvents()
         bindActions()
@@ -85,7 +86,7 @@ class EditTaskFragment : BottomSheetDialog() {
             .subscribe() {
                 val newTask = task!!.copy(
                     content = inputTaskContent.text.toString(),
-                    isHighPriority = highPriorityCheckBox.isChecked
+                    highPriority = priorityChip.getHighPriority()
                 )
                 taskViewModel.update(newTask)
             }
@@ -100,16 +101,20 @@ class EditTaskFragment : BottomSheetDialog() {
         }
     }
 
-
+    private fun setHint() {
+        textInputLayout.hint = getString(R.string.edit_task_input_hint)
+    }
 
     fun fillData() {
         requireNotNull(task) {
             "Task is null dailog should be closed"
         }
 
+
+
         task?.let {
             inputTaskContent.setText(it.content)
-            highPriorityCheckBox.isChecked = it.isHighPriority
+            priorityChip.setColorForHighPriority(it.highPriority)
         }
     }
 

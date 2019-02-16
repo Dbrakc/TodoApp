@@ -3,6 +3,7 @@ package com.davidbragadeveloper.todoapp.ui.base
 import android.app.Activity
 import android.os.Bundle
 import com.davidbragadeveloper.todoapp.R
+import com.davidbragadeveloper.todoapp.data.model.HighPriority
 import com.davidbragadeveloper.todoapp.data.model.Taskeable
 import com.davidbragadeveloper.todoapp.ui.TaskViewModel
 import com.davidbragadeveloper.todoapp.util.Navigation
@@ -34,11 +35,11 @@ abstract class BaseNewTaskeable <T : Taskeable> : BaseActivity(){
             .clicks()
             .throttleFirst(600, TimeUnit.MILLISECONDS)
             .subscribe {
-                onAddNewButtonClick(inputTaskContent.text.toString(), highPriorityCheckBox.isChecked)
+                onAddNewButtonClick(inputTaskContent.text.toString(), priorityChip.getHighPriority())
             }
             .addTo(compositeDisposable) }
 
-    abstract fun onAddNewButtonClick(content: String, isHighPriority: Boolean)
+    abstract fun onAddNewButtonClick(content: String, isHighPriority: HighPriority)
 
     override fun onDestroy() {
         compositeDisposable.clear()

@@ -16,7 +16,7 @@ data class TaskEntity(
     @ColumnInfo(name = "is_done")
     val isDone: Boolean,
     @ColumnInfo(name = "is_high_priority")
-    val isHighPriority: Boolean
+    val highPriority: String
 )
 
 @Entity (tableName = "subtasks",
@@ -35,7 +35,7 @@ data class SubtaskEntity(
     @ColumnInfo(name = "is_done")
     val isDone: Boolean,
     @ColumnInfo(name = "is_high_priority")
-    val isHighPriority: Boolean,
+    val highPriority: String,
     @ColumnInfo(name = "task_id")
     val taskId: Long
 )

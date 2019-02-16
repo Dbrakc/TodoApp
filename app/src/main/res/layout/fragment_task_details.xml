@@ -6,6 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/mainScreen"
+        android:padding="16dp"
         tools:context=".ui.taskdetail.TaskDetailsFragment">
 
 
@@ -35,12 +36,13 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginEnd="8dp"/>
 
-            <com.google.android.material.chip.Chip
+            <com.davidbragadeveloper.todoapp.util.PriorityChip
                     style="@style/Widget.MaterialComponents.Chip.Entry"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/priorityChip"
                     android:textSize="17sp"
+                    android:enabled="false"
                     app:chipIcon="@drawable/ic_high_priority"
                     app:layout_constraintBaseline_toBaselineOf="@id/dateTextView"
                     android:layout_marginTop="24dp"

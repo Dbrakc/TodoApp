@@ -8,9 +8,11 @@ import android.text.style.StrikethroughSpan
 import android.util.Log
 import android.view.View
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.recyclerview.widget.DiffUtil
 import com.davidbragadeveloper.todoapp.R
+import com.davidbragadeveloper.todoapp.data.model.HighPriority
 import com.davidbragadeveloper.todoapp.data.model.Subtask
 import com.davidbragadeveloper.todoapp.ui.base.BaseAdapter
 import com.davidbragadeveloper.todoapp.util.DateHelper
@@ -25,7 +27,7 @@ import java.util.concurrent.TimeUnit
 class SubtaskAdapter(
     val onTaskMarked: (Subtask, Boolean) -> Unit,
     val onTaskLongClicked: (Subtask) -> Unit,
-    val onTaskHighPriorityMarked: (Subtask, Boolean) -> Unit
+    val onTaskHighPriorityMarked: (Subtask, HighPriority) -> Unit
 ): BaseAdapter<Subtask>(
     object : DiffUtil.ItemCallback<Subtask>() {
         override fun areItemsTheSame(oldItem: Subtask, newItem: Subtask): Boolean = oldItem.id == newItem.id
@@ -35,7 +37,11 @@ class SubtaskAdapter(
     }
 
 ) {
+
+    var primaryColor: Int = 0
+
     override fun bindInViewHolder(taskeable: Subtask, view: View) {
+        primaryColor = ContextCompat.getColor(view.context, R.color.colorPrimary)
         with(view){
             Log.d("subtak_id", taskeable.id.toString())
             if(taskeable.isDone){
@@ -45,8 +51,7 @@ class SubtaskAdapter(
                 removeStrikethrough(contentTextView, taskeable.content)
             }
 
-
-            applyColorToHighPriority(buttonHighPriority, taskeable.isHighPriority)
+            applyColorToHighPriority(buttonHighPriority, taskeable.highPriority)
 
             dateTextView.text = DateHelper.calculateTimaAgo(taskeable.createdAt)
             isDoneCheckBox.isChecked = taskeable.isDone
@@ -80,38 +85,49 @@ class SubtaskAdapter(
                 .clicks()
                 .throttleFirst(600, TimeUnit.MILLISECONDS)
                 .subscribe{
-                    val isHighPriority = !taskeable.isHighPriority
-                    onTaskHighPriorityMarked(taskeable, isHighPriority)
-                    applyColorToHighPriority(buttonHighPriority, isHighPriority)
+                    val highPriority = if ( taskeable.highPriority == HighPriority.HIGH) {
+                        HighPriority.LOW
+                    }else if(taskeable.highPriority == HighPriority.MEDIUM) {
+                        HighPriority.HIGH
+                    }else if(taskeable.highPriority == HighPriority.LOW) {
+                        HighPriority.MEDIUM
+                    }else{
+                        HighPriority.LOW
+                    }
+                    onTaskHighPriorityMarked(taskeable, highPriority)
+                    applyColorToHighPriority(buttonHighPriority, highPriority)
                 }
                 .addTo(componentDisposable)
         }
     }
 
-    private fun applyColorToHighPriority(buttonHighPriority: IconButton, highPriority: Boolean) {
-        if (highPriority){
+    private fun applyColorToHighPriority(buttonHighPriority: IconButton, highPriority: HighPriority) {
+        if (highPriority == HighPriority.HIGH) {
             buttonHighPriority.setColorDrawable(Color.RED)
-        }else{
+        } else if (highPriority == HighPriority.MEDIUM) {
+            buttonHighPriority.setColorDrawable(primaryColor)
+        } else {
             buttonHighPriority.setColorDrawable(Color.WHITE)
         }
-
     }
+
+
 
     private fun executeAnimation(view: View, isDone: Boolean) {
         val contentTextView = view.findViewById<TextView>(R.id.contentTextView)
         val text = contentTextView.text.toString()
-        if(isDone) {
-            applyStrikethrough(contentTextView,text,true)
-        }else{
-            removeStrikethrough(contentTextView,text,true)
+        if (isDone) {
+            applyStrikethrough(contentTextView, text, true)
+        } else {
+            removeStrikethrough(contentTextView, text, true)
         }
         contentTextView.invalidate()
     }
 
-    private fun applyStrikethrough(view: TextView, text: String, animate: Boolean = false){
+    private fun applyStrikethrough(view: TextView, text: String, animate: Boolean = false) {
         val span = SpannableString(text)
         val spanStrike = StrikethroughSpan()
-        if(animate) {
+        if (animate) {
             ValueAnimator.ofInt(text.length)
                 .apply {
                     duration = 300
@@ -121,17 +137,17 @@ class SubtaskAdapter(
                         view.text = span
                     }
                 }.start()
-        }else{
+        } else {
             span.setSpan(spanStrike, 0, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             view.text = span
         }
     }
 
-    private fun removeStrikethrough(view: TextView, text: String, animate: Boolean = false){
+    private fun removeStrikethrough(view: TextView, text: String, animate: Boolean = false) {
         val span = SpannableString(text)
         val spanStrike = StrikethroughSpan()
-        if(animate) {
-            ValueAnimator.ofInt(text.length,0)
+        if (animate) {
+            ValueAnimator.ofInt(text.length, 0)
                 .apply {
                     duration = 300
                     interpolator = FastOutSlowInInterpolator()
@@ -140,10 +156,11 @@ class SubtaskAdapter(
                         view.text = span
                     }
                 }.start()
-        }else{
+        } else {
             view.text = text
         }
     }
+
 
 
 }

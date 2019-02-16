@@ -6,7 +6,6 @@ import androidx.lifecycle.Observer
 import com.davidbragadeveloper.todoapp.R
 import com.davidbragadeveloper.todoapp.ui.base.BaseActivity
 import com.davidbragadeveloper.todoapp.ui.TaskViewModel
-import com.davidbragadeveloper.todoapp.ui.tasks.TasksFragment
 import com.davidbragadeveloper.todoapp.util.Navigation
 import com.jakewharton.rxbinding3.view.clicks
 import io.reactivex.disposables.CompositeDisposable
@@ -26,8 +25,13 @@ class NewTaskActivity : BaseActivity() {
         setUpToolbar(true)
         setTitle(R.string.new_task_title)
 
+        setHint()
         bindObserver()
         bindActions()
+    }
+
+    private fun setHint() {
+        textInputLayout.hint = getString(R.string.new_task_input_hint)
     }
 
     private fun bindObserver() {
@@ -48,7 +52,7 @@ class NewTaskActivity : BaseActivity() {
             .clicks()
             .throttleFirst(600, TimeUnit.MILLISECONDS)
             .subscribe {
-                taskViewModel.addNew(inputTaskContent.text.toString(), highPriorityCheckBox.isChecked)
+                taskViewModel.addNew(inputTaskContent.text.toString(), priorityChip.getHighPriority())
             }
             .addTo(compositeDisposable)
     }
