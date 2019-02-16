@@ -8,26 +8,22 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.SpinnerAdapter
-import androidx.fragment.app.Fragment
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.lifecycle.Observer
 
 import com.davidbragadeveloper.todoapp.R
 import com.davidbragadeveloper.todoapp.data.model.Task
-import com.davidbragadeveloper.todoapp.ui.base.BaseFragment
-import com.davidbragadeveloper.todoapp.ui.edittask.EditTaskFragment
+import com.davidbragadeveloper.todoapp.ui.base.BaseTasksFragment
+import com.davidbragadeveloper.todoapp.ui.subtask.SubTaskFragment
 import com.davidbragadeveloper.todoapp.util.DateHelper
+import com.davidbragadeveloper.todoapp.util.Navigation
 import com.jakewharton.rxbinding3.view.clicks
-import com.jakewharton.rxbinding3.widget.itemSelections
+import com.jakewharton.rxbinding3.view.longClicks
 import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.fragment_task_details.*
-import kotlinx.android.synthetic.main.item_task.view.*
 import java.util.concurrent.TimeUnit
 
 
-class TaskDetailsFragment : BaseFragment() {
+class TaskDetailsFragment : BaseTasksFragment() {
 
     companion object {
         const val PARAM_ID = "id"
@@ -61,7 +57,7 @@ class TaskDetailsFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        with(taskViewModel) {
+        with(viewModel) {
             taskByIdEvent
                 .observe(this@TaskDetailsFragment, Observer {
                     setUp(it)
@@ -69,27 +65,38 @@ class TaskDetailsFragment : BaseFragment() {
                 })
         }
 
-        taskViewModel.getTaskById(id)
+        viewModel.getById(id)
 
     }
 
-    private fun setActions(task: Task?) {
+    private fun setActions(task: Task) {
         isDoneCheckBox
             .clicks()
             .throttleFirst(600,TimeUnit.MILLISECONDS)
             .subscribe{
-                task?.let {
+                task.let {
                     val isChecked = !it.isDone
                     val updatedTask = it.copy(isDone = isChecked)
-                    taskViewModel.updateTask(updatedTask)
+                    viewModel.update(updatedTask)
                 }
             }
             .addTo(compositeDisposable)
-        taskCardView
+
+
+        addSubtaskButton
             .clicks()
+            .throttleFirst(600, TimeUnit.MILLISECONDS)
+            .subscribe {
+                Navigation.navigateToNewSubtaskActivity(task, context!!)
+            }
+            .addTo(compositeDisposable)
+
+
+        mainScreen
+            .longClicks()
             .throttleFirst(300, TimeUnit.MILLISECONDS)
             .subscribe {
-                showBottomSheetMenu(task!!){
+                showBottomSheetMenu(task){
                     activity?.onBackPressed()
                 }
             }
@@ -114,6 +121,13 @@ class TaskDetailsFragment : BaseFragment() {
             isDoneCheckBox.setTextColor(Color.WHITE)
             isDoneCheckBox.isChecked = false
         }
+
+        val fragment = SubTaskFragment.newInstance(task.id)
+        childFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragmentContainer,fragment, "subtask_list")
+            .commit()
+
     }
 
 

@@ -1,12 +1,14 @@
-package com.davidbragadeveloper.todoapp.ui.newtask
+package com.davidbragadeveloper.todoapp.ui.newsubtask
 
 import android.app.Activity
 import android.os.Bundle
+import android.util.Log
 import androidx.lifecycle.Observer
 import com.davidbragadeveloper.todoapp.R
+import com.davidbragadeveloper.todoapp.data.model.Task
+import com.davidbragadeveloper.todoapp.ui.SubtaskViewModel
 import com.davidbragadeveloper.todoapp.ui.base.BaseActivity
-import com.davidbragadeveloper.todoapp.ui.TaskViewModel
-import com.davidbragadeveloper.todoapp.ui.tasks.TasksFragment
+import com.davidbragadeveloper.todoapp.ui.edittask.EditTaskFragment.Companion.PARAM_TASK
 import com.davidbragadeveloper.todoapp.util.Navigation
 import com.jakewharton.rxbinding3.view.clicks
 import io.reactivex.disposables.CompositeDisposable
@@ -15,28 +17,30 @@ import kotlinx.android.synthetic.main.activity_new_task.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.concurrent.TimeUnit
 
-class NewTaskActivity : BaseActivity() {
-
+class NewSubtaskActivity () : BaseActivity() {
+    lateinit var task: Task
+    private val subtaskViewModel : SubtaskViewModel by viewModel()
     private val compositeDisposable = CompositeDisposable()
-    private val taskViewModel : TaskViewModel by viewModel()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_task)
-        setUpToolbar(true)
-        setTitle(R.string.new_task_title)
+        val extras = intent.extras
+        task = extras?.getParcelable(PARAM_TASK)!!
 
         bindObserver()
         bindActions()
+
     }
 
     private fun bindObserver() {
-        with(taskViewModel){
-            addedEvent.observe(this@NewTaskActivity, Observer {
+        with(subtaskViewModel){
+            subtaskAddedEvent.observe(this@NewSubtaskActivity, Observer {
                 if(!it.hasBeenHandled) {
                     it.getContentIfNotHandled()
                     setResult(Activity.RESULT_OK)
-                    Navigation.navigateToTasksFragment(context = applicationContext)
+                    this@NewSubtaskActivity.onBackPressed()
                 }
 
             })
@@ -48,7 +52,7 @@ class NewTaskActivity : BaseActivity() {
             .clicks()
             .throttleFirst(600, TimeUnit.MILLISECONDS)
             .subscribe {
-                taskViewModel.addNew(inputTaskContent.text.toString(), highPriorityCheckBox.isChecked)
+                subtaskViewModel.addNew(inputTaskContent.text.toString(), highPriorityCheckBox.isChecked,task)
             }
             .addTo(compositeDisposable)
     }
@@ -57,4 +61,8 @@ class NewTaskActivity : BaseActivity() {
         compositeDisposable.clear()
         super.onDestroy()
     }
+
+
+
+
 }

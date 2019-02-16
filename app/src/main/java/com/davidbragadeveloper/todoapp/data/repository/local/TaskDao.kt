@@ -14,7 +14,7 @@ abstract class TaskDao {
     abstract fun observeAll():Flowable<List<TaskEntity>>
 
     @Query("SELECT * FROM tasks WHERE id = :id")
-    abstract fun getById(id: Long):Single<TaskEntity>
+    abstract fun getById(id: Long):Flowable<TaskEntity>
 
     @Insert
     abstract fun insert(taskEntity: TaskEntity)

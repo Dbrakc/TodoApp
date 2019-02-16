@@ -1,12 +1,10 @@
-package com.davidbragadeveloper.todoapp.ui.newtask
+package com.davidbragadeveloper.todoapp.ui.base
 
 import android.app.Activity
 import android.os.Bundle
-import androidx.lifecycle.Observer
 import com.davidbragadeveloper.todoapp.R
-import com.davidbragadeveloper.todoapp.ui.base.BaseActivity
+import com.davidbragadeveloper.todoapp.data.model.Taskeable
 import com.davidbragadeveloper.todoapp.ui.TaskViewModel
-import com.davidbragadeveloper.todoapp.ui.tasks.TasksFragment
 import com.davidbragadeveloper.todoapp.util.Navigation
 import com.jakewharton.rxbinding3.view.clicks
 import io.reactivex.disposables.CompositeDisposable
@@ -15,10 +13,9 @@ import kotlinx.android.synthetic.main.activity_new_task.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.concurrent.TimeUnit
 
-class NewTaskActivity : BaseActivity() {
+abstract class BaseNewTaskeable <T : Taskeable> : BaseActivity(){
 
-    private val compositeDisposable = CompositeDisposable()
-    private val taskViewModel : TaskViewModel by viewModel()
+    val compositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,31 +27,22 @@ class NewTaskActivity : BaseActivity() {
         bindActions()
     }
 
-    private fun bindObserver() {
-        with(taskViewModel){
-            addedEvent.observe(this@NewTaskActivity, Observer {
-                if(!it.hasBeenHandled) {
-                    it.getContentIfNotHandled()
-                    setResult(Activity.RESULT_OK)
-                    Navigation.navigateToTasksFragment(context = applicationContext)
-                }
-
-            })
-        }
-    }
+    abstract fun bindObserver()
 
     private fun bindActions() {
         newTaskButton
             .clicks()
             .throttleFirst(600, TimeUnit.MILLISECONDS)
             .subscribe {
-                taskViewModel.addNew(inputTaskContent.text.toString(), highPriorityCheckBox.isChecked)
+                onAddNewButtonClick(inputTaskContent.text.toString(), highPriorityCheckBox.isChecked)
             }
-            .addTo(compositeDisposable)
-    }
+            .addTo(compositeDisposable) }
+
+    abstract fun onAddNewButtonClick(content: String, isHighPriority: Boolean)
 
     override fun onDestroy() {
         compositeDisposable.clear()
         super.onDestroy()
     }
 }
+

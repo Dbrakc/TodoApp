@@ -1,6 +1,7 @@
-package com.davidbragadeveloper.todoapp.ui.tasks
+package com.davidbragadeveloper.todoapp.ui.subtask
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,33 +10,30 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.davidbragadeveloper.todoapp.R
-import com.davidbragadeveloper.todoapp.data.model.Task
-import com.davidbragadeveloper.todoapp.ui.base.BaseTasksFragment
+import com.davidbragadeveloper.todoapp.data.model.Subtask
+import com.davidbragadeveloper.todoapp.ui.base.BaseSubtasksFragment
 import com.davidbragadeveloper.todoapp.util.Navigation
 import kotlinx.android.synthetic.main.fragment_tasks.*
 
 
 
-class TasksFragment  : BaseTasksFragment() {
+class SubTaskFragment  : BaseSubtasksFragment() {
 
     companion object {
-        fun newInstance() = TasksFragment()
+        const val PARAM_ID = "param_id"
+        fun newInstance(id: Long) = SubTaskFragment().apply{
+            arguments = Bundle().apply {
+                putLong(PARAM_ID, id)
+            }
+
+        }
     }
 
 
+    var id : Long = -1L
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-
-    }
-
-    val adapter: TaskAdapter by lazy {
-        TaskAdapter(
-            onTaskClicked = {
-                Navigation.navigateToDetail(it, fragmentManager!!)
-            },
+    val adapter: SubtaskAdapter by lazy {
+        SubtaskAdapter(
             onTaskLongClicked = {
                 showBottomSheetMenu(it)
             },
@@ -53,6 +51,20 @@ class TasksFragment  : BaseTasksFragment() {
         )
     }
 
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        id = arguments!!.getLong(PARAM_ID, -1L)
+
+        viewModel.load(id);
+
+        if(id == -1L){
+            activity!!.onBackPressed()
+        }
+    }
+
+
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_tasks,container,false)
     }
@@ -62,12 +74,12 @@ class TasksFragment  : BaseTasksFragment() {
         super.onActivityCreated(savedInstanceState)
         setUp()
         with(viewModel) {
-            loadEvent.observe(this@TasksFragment, Observer {
+            subtaskLoadEvent.observe(this@SubTaskFragment, Observer {
                 adapter.submitList(it.map {
-                    it as? Task
+                    it as Subtask
                 })
             })
-            updateEvent.observe(this@TasksFragment, Observer {
+            subtaskUpdateEvent.observe(this@SubTaskFragment, Observer {
 
             })
         }

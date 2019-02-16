@@ -1,4 +1,4 @@
-package com.davidbragadeveloper.todoapp.data.repository
+package com.davidbragadeveloper.todoapp.data.repository.datasources
 
 import com.davidbragadeveloper.todoapp.data.model.Task
 import io.reactivex.Flowable
@@ -8,14 +8,14 @@ interface TaskDataSource {
 
     fun getAllTasks(): Single<List<Task>>
 
-    fun observerAll(): Flowable<List<Task>>
+    fun observerAllTasks(): Flowable<List<Task>>
 
     fun getTaskById(id: Long): Flowable<Task>
 
-    fun insert(task: Task)
+    fun insertTask(task: Task)
 
-    fun delete (task: Task)
+    fun deleteTask (task: Task)
 
-    fun update (task: Task)
+    fun updateTask (task: Task)
 
 }

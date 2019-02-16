@@ -1,4 +1,4 @@
-package com.davidbragadeveloper.todoapp.ui.edittask
+package com.davidbragadeveloper.todoapp.ui.editSubtask
 
 
 import android.os.Bundle
@@ -9,7 +9,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 
 import com.davidbragadeveloper.todoapp.R
+import com.davidbragadeveloper.todoapp.data.model.Subtask
 import com.davidbragadeveloper.todoapp.data.model.Task
+import com.davidbragadeveloper.todoapp.ui.SubtaskViewModel
 import com.davidbragadeveloper.todoapp.ui.TaskViewModel
 import com.davidbragadeveloper.todoapp.util.BottomSheetDialog
 import com.jakewharton.rxbinding3.view.clicks
@@ -24,31 +26,31 @@ import java.util.concurrent.TimeUnit
  * A simple [Fragment] subclass.
  *
  */
-class EditTaskFragment : BottomSheetDialog() {
+class EditSubTaskFragment : BottomSheetDialog() {
 
     companion object {
-        const val PARAM_TASK = "subtask"
-        fun newInstance(task: Task): EditTaskFragment = EditTaskFragment().apply {
+        const val PARAM_SUBTASK = "subtask"
+        fun newInstance(subtask: Subtask): EditSubTaskFragment = EditSubTaskFragment().apply {
             arguments= Bundle().apply {
-                putParcelable(PARAM_TASK, task)
+                putParcelable(PARAM_SUBTASK, subtask)
             }
         }
     }
 
 
-    val taskViewModel: TaskViewModel by viewModel()
+    val subTaskViewModel: SubtaskViewModel by viewModel()
 
-    var task: Task? = null
+    var subtask: Subtask? = null
 
     private val compositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        task = arguments?.getParcelable(PARAM_TASK)
+        subtask = arguments?.getParcelable(PARAM_SUBTASK)
 
 
-        if (task == null) {
+        if (subtask == null) {
             dismiss()
         }
     }
@@ -83,18 +85,18 @@ class EditTaskFragment : BottomSheetDialog() {
             .clicks()
             .throttleFirst(300, TimeUnit.MILLISECONDS)
             .subscribe() {
-                val newTask = task!!.copy(
+                val newSubtask = subtask!!.copy(
                     content = inputTaskContent.text.toString(),
                     isHighPriority = highPriorityCheckBox.isChecked
                 )
-                taskViewModel.update(newTask)
+                subTaskViewModel.update(newSubtask)
             }
             .addTo(compositeDisposable)
     }
 
     fun bindEvents() {
-        with(taskViewModel) {
-            updateEvent.observe(this@EditTaskFragment, Observer {
+        with(subTaskViewModel) {
+            subtaskUpdateEvent.observe(this@EditSubTaskFragment, Observer {
                 dismiss()
             })
         }
@@ -103,11 +105,11 @@ class EditTaskFragment : BottomSheetDialog() {
 
 
     fun fillData() {
-        requireNotNull(task) {
+        requireNotNull(subtask) {
             "Task is null dailog should be closed"
         }
 
-        task?.let {
+        subtask?.let {
             inputTaskContent.setText(it.content)
             highPriorityCheckBox.isChecked = it.isHighPriority
         }

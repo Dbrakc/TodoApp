@@ -1,11 +1,8 @@
 package com.davidbragadeveloper.todoapp.ui
 
 import android.os.Bundle
-import android.app.Activity
 import com.davidbragadeveloper.todoapp.R
 import com.davidbragadeveloper.todoapp.ui.base.BaseActivity
-import com.davidbragadeveloper.todoapp.ui.taskdetail.TaskDetailsFragment
-import com.davidbragadeveloper.todoapp.ui.tasks.TaskViewModel
 import com.davidbragadeveloper.todoapp.ui.tasks.TasksFragment
 import com.davidbragadeveloper.todoapp.util.Const
 import com.davidbragadeveloper.todoapp.util.Navigation
@@ -14,8 +11,6 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.item_bottom_sheet_menu.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.concurrent.TimeUnit
 
 class MainActivity : BaseActivity() {
@@ -37,12 +32,12 @@ class MainActivity : BaseActivity() {
         Navigation.navigateToTasksFragment(supportFragmentManager)
     }
 
-    private fun bindActions(){
+    private fun bindActions() {
 
         fab
             .clicks()
             .throttleFirst(500, TimeUnit.MILLISECONDS)
-            .subscribe{
+            .subscribe {
                 Navigation.navigationToNewTaskActivity(this)
             }
             .addTo(compositeDisposable)
@@ -58,14 +53,13 @@ class MainActivity : BaseActivity() {
         val fragmentDetails = supportFragmentManager.findFragmentByTag(Const.FRAGMENT_DETAILS)
 
         fragmentDetails?.let {
-            if(it.isVisible) {
+            if (it.isVisible) {
                 Navigation.navigateToTasksFragment(supportFragmentManager)
                 return
             }
         }
         super.onBackPressed()
     }
-
 
 
 }

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.davidbragadeveloper.todoapp"
-        >
+          package="com.davidbragadeveloper.todoapp">
 
     <application
             android:name=".ui.TodoApp"
@@ -10,8 +9,9 @@
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
-            android:theme="@style/AppTheme"
-            >
+            android:theme="@style/AppTheme">
+        <activity android:name=".ui.newsubtask.NewSubtaskActivity">
+        </activity>
         <activity android:name=".ui.newtask.NewTaskActivity">
         </activity>
         <activity android:name=".ui.MainActivity">

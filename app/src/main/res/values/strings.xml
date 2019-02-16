@@ -17,4 +17,5 @@
     <string name="edit_task_input_hint">Edit task content</string>
     <string name="is_high_priority">High priority</string>
     <string name="is_done">Is done</string>
+    <string name="add_subtask">Add subtask</string>
 </resources>

@@ -2,6 +2,7 @@ package com.davidbragadeveloper.todoapp.ui.tasks
 
 import androidx.recyclerview.widget.DiffUtil
 import com.davidbragadeveloper.todoapp.data.model.Task
+import com.davidbragadeveloper.todoapp.data.model.Taskeable
 
 class TaskDiffUtil: DiffUtil.ItemCallback<Task> (){
 
